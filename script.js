@@ -1,7 +1,10 @@
 const game = document.querySelector(".game");
 const basket = document.querySelector(".basket");
 const fruits = document.querySelector(".fruits");
-let score = 0;
+let count = document.querySelector(".counter");
+
+
+
 
 let basketLeft = parseInt(
     window.getComputedStyle(basket).getPropertyValue("left")
@@ -12,13 +15,13 @@ let basketBottom = parseInt(
 
 function moveBasketLeft() {
     if (basketLeft > 0) {
-        basketLeft -= 15;
+        basketLeft -= 25;
         basket.style.left = basketLeft + "px";
     }
 }
 function moveBasketRight() {
-    if (basketLeft < 620) {
-        basketLeft += 15;
+    if (basketLeft < 250) {
+        basketLeft += 25;
         basket.style.left = basketLeft + "px";
     }
 }
@@ -33,9 +36,8 @@ function control(e) {
 }
 
 function generateFruits() {
-    let fruitBottom = 470;
-    let fruitLeft = Math.floor(Math.random() * 620);
-
+    let fruitBottom = 500; 
+    let fruitLeft = Math.floor(Math.random() * 250);
     let fruit = document.createElement("div");
     fruit.setAttribute("class", "fruit");
     fruits.appendChild(fruit);
@@ -44,28 +46,51 @@ function generateFruits() {
         if (
             fruitBottom < basketBottom + 50 &&
             fruitBottom > basketBottom &&
-            fruitLeft > basketLeft - 30 &&
-            fruitLeft < basketLeft + 80
+            fruitLeft > basketLeft - 20 &&
+            fruitLeft < basketLeft + 50
         ) {
-			fruits.removeChild(fruit);
-			clearInterval(fallInterval);
-			score++;
-		}
-            if (fruitBottom < basketBottom) {
-                // alert("Game over! Your score is: "+score);
-				
-				clearInterval(fallInterval);
-				clearTimeout(fruitTimeout);
-				location.reload();
-            }
+
+            addEggToBasket();
+            breakEggTimeout;
+            fruits.removeChild(fruit);
+            clearInterval(fallInterval);
+            count.innerHTML++;
+        }
+        if (fruitBottom < basketBottom) {
+            fruit.classList.add("fruit_break");
+            clearInterval(fallInterval);
+            clearTimeout(fruitTimeout);
+            // location.reload();
+        }
         fruitBottom -= 5;
         fruit.style.bottom = fruitBottom + "px";
         fruit.style.left = fruitLeft + "px";
     }
     let fallInterval = setInterval(fallDownFruit, 20);
     let fruitTimeout = setTimeout(generateFruits, 2000);
+    let breakEggTimeout = setTimeout(removeEggFromBasket,500);
+    
 }
 
 generateFruits();
 
+function addEggToBasket() {
+    basket.classList.toggle('basket_plus__egg')
+}
+function removeEggFromBasket() {
+    if(basket.classList.contains('basket_plus__egg')) {
+        basket.classList.remove('basket_plus__egg')
+    }
+}
 document.addEventListener("keydown", control);
+
+
+
+
+
+document
+    .getElementById("left")
+    .addEventListener("touchstart", moveBasketLeft, { passive: true });
+document
+    .getElementById("right")
+    .addEventListener("touchstart", moveBasketRight, { passive: true });
